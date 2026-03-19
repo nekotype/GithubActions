@@ -53,7 +53,8 @@ async function openaiReview({ apiKey, model, prompt }) {
                 "Return JSON with keys summary, findings, verdict. " +
                 "Use verdict fail only when there is at least one high-severity finding or " +
                 "when the diff is too incomplete or risky to assess safely. " +
-                "Each finding must contain severity (high|medium|low), file, line, title, body."
+                "Each finding must contain severity (high|medium|low), file, line, title, body. " +
+                "Write summary, title, and body in natural Japanese."
             }
           ]
         },
@@ -154,7 +155,7 @@ function buildFailureReview(summary, reason) {
         severity: "high",
         file: "workflow",
         line: null,
-        title: "AI review could not safely assess this pull request",
+        title: "AIレビューでこのプルリクエストを安全に評価できませんでした",
         body: reason
       }
     ]
@@ -187,8 +188,9 @@ function createPrompt(pullRequest, files) {
     .join("\n\n");
 
   return [
-    "Review the following pull request diff and return JSON only.",
-    "Flag concrete bugs, regressions, and risky changes. Ignore style-only nits.",
+    "次のプルリクエスト差分をレビューし、JSONだけを返してください。",
+    "具体的なバグ、回帰、危険な変更を指摘してください。スタイルだけの軽微な指摘は無視してください。",
+    "summary と findings の title/body は日本語で書いてください。",
     "",
     `PR TITLE: ${pullRequest.title}`,
     `PR BODY: ${pullRequest.body || "(empty)"}`,
@@ -203,7 +205,7 @@ function createPrompt(pullRequest, files) {
 function buildCommentBody(review, model) {
   const findingsSection =
     review.findings.length === 0
-      ? "No findings."
+      ? "指摘はありません。"
       : review.findings
           .map((finding, index) => {
             const location = finding.line
@@ -211,7 +213,7 @@ function buildCommentBody(review, model) {
               : finding.file;
             return [
               `${index + 1}. [${finding.severity.toUpperCase()}] ${finding.title}`,
-              `   Location: ${location}`,
+              `   場所: ${location}`,
               `   ${finding.body}`
             ].join("\n");
           })
@@ -219,10 +221,10 @@ function buildCommentBody(review, model) {
 
   return [
     COMMENT_MARKER,
-    "## AI PR Review",
+    "## AI PRレビュー",
     "",
     `Model: \`${model}\``,
-    `Verdict: \`${review.verdict}\``,
+    `判定: \`${review.verdict}\``,
     "",
     review.summary,
     "",
