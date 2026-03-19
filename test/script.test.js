@@ -9,7 +9,7 @@ import {
 test("getWorkflowChecklist returns three learning targets", () => {
   const items = getWorkflowChecklist();
 
-  assert.equal(items.length, 3);
+  assert.equal(items.length, 4);
   assert.deepEqual(
     items.map((item) => item.id),
     ["test", "review", "deploy"]
@@ -25,4 +25,3 @@ test("renderWorkflowItems renders each title and badge", () => {
   assert.match(html, />1</);
   assert.match(html, />3</);
 });
-
