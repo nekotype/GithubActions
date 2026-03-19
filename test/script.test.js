@@ -25,4 +25,3 @@ test("renderWorkflowItems renders each title and badge", () => {
   assert.match(html, />1</);
   assert.match(html, />3</);
 });
-
