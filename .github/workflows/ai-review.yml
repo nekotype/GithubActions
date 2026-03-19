@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Check out trusted base branch contents
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           persist-credentials: false
@@ -38,4 +38,3 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         run: node .github/scripts/ai-review.mjs
-
