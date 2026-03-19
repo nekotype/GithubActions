@@ -1,4 +1,4 @@
-name: ai-review
+name: PR / AI Review
 
 on:
   pull_request_target:
